@@ -111,6 +111,13 @@ public class VulnerableController {
         Map<String, Object> response = new HashMap<>();
         try {
             // Vulnerable: User input directly in shell command
+            List<String> allowedCmds = new ArrayList<String>();
+            allowedCmds.add("/usr/bin/ls");
+            allowedCmds.add("/usr/bin/date");
+            if(!allowedCmds.contains(cmd)) { 
+                response.put("error", "Cmd not allowed");
+                return response;
+            }
             Process process = Runtime.getRuntime().exec(cmd);
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             StringBuilder output = new StringBuilder();
