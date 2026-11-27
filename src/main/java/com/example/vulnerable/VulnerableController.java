@@ -18,6 +18,7 @@ import java.security.MessageDigest;
 import java.sql.*;
 import java.util.*;
 import java.nio.file.Path;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * Intentionally Vulnerable REST Controller
@@ -182,7 +183,8 @@ public class VulnerableController {
     @GetMapping("/search")
     public String search(@RequestParam String query) {
         // Vulnerable: Reflects user input without sanitization
-        return "<h1>Search Results for: " + query + "</h1>";
+        String safeQuery = HtmlUtils.htmlEscape(query);
+        return "<h1>Search Results for: " + safeQuery + "</h1>";
     }
 
     // VULNERABILITY: Server-Side Request Forgery (SSRF) (CWE-918)
