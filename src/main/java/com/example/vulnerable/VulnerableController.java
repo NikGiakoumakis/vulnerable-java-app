@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.sql.*;
 import java.util.*;
+import java.nio.file.Path;
 
 /**
  * Intentionally Vulnerable REST Controller
@@ -141,13 +142,12 @@ public class VulnerableController {
         Map<String, Object> response = new HashMap<>();
         Path basePath = Path.of(System.getProperty("user.dir"), "uploads").toAbsolutePath().normalize();
         try {
-            
             Path filePath = basePath.resolve(filename).normalize();
             if(!filePath.startsWith(basePath)){
                 response.put("error", "Wrong target directory");
-                return response
+                return response;
             }
-            String content = Files.readString(filePath)
+            String content = Files.readString(filePath);
             response.put("content", content);
         } catch (IOException e) {
             response.put("error", "File not found");
