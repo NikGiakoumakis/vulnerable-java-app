@@ -139,10 +139,15 @@ public class VulnerableController {
     @GetMapping("/files")
     public Map<String, Object> getFile(@RequestParam String filename) {
         Map<String, Object> response = new HashMap<>();
+        Path basePath = Path.of(System.getProperty("user.dir"), "uploads").toAbsolutePath().normalize();
         try {
-            // Vulnerable: No sanitization of file path
-            String filePath = System.getProperty("user.dir") + "/uploads/" + filename;
-            String content = new String(Files.readAllBytes(Paths.get(filePath)));
+            
+            Path filePath = basePath.resolve(filename).normalize();
+            if(!filePath.startsWith(basePath)){
+                response.put("error", "Wrong target directory");
+                return response
+            }
+            String content = Files.readString(filePath)
             response.put("content", content);
         } catch (IOException e) {
             response.put("error", "File not found");
