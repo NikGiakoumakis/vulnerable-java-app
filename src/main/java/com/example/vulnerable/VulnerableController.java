@@ -160,14 +160,18 @@ public class VulnerableController {
     public Map<String, Object> uploadFile(@RequestParam("file") String fileContent,
                                           @RequestParam("filename") String filename) {
         Map<String, Object> response = new HashMap<>();
+        Path basePath = Path.of(System.getProperty("user.dir"), "uploads").toAbsolutePath().normalize();
         try {
             // Vulnerable: No file type validation, no size limits
-            String uploadPath = System.getProperty("user.dir") + "/uploads/" + filename;
-            Files.write(Paths.get(uploadPath), fileContent.getBytes());
-
+            Path filePath = basePath.resolve(filename).normalize();
+            if(!filePath.startsWith(basePath)){
+                response.put("error", "Wrong target directory");
+                return response;
+            }
+            Files.write(filePath, fileContent.getBytes());
             response.put("success", true);
             response.put("filename", filename);
-            response.put("path", uploadPath);
+            response.put("path", filePath.toString());
         } catch (IOException e) {
             response.put("error", e.getMessage());
         }
